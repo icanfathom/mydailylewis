@@ -49,7 +49,7 @@
                 font-style: italic;
             }
 
-            @media screen and (max-device-width: 812px) {
+            @media screen and (max-width: 812px), (max-height: 812px)  {
                 .blockquote {
                     padding: 30px;
                     border-radius: 20px;
@@ -69,7 +69,7 @@
     <body>
         <div class="container">
             <div class="blockquote">
-                <div class="quote" style="font-size: 2.2rem; line-height: 4.4rem">In friendship...we think we have chosen our peers. In reality a few years' difference in the dates of our births, a few more miles between certain houses, the choice of one university instead of another...the accident of a topic being raised or not raised at a first meeting--any of these chances might have kept us apart. But, for a Christian, there are, strictly speaking no chances. A secret master of ceremonies has been at work. Christ, who said to the disciples, "Ye have not chosen me, but I have chosen you," can truly say to every group of Christian friends, "Ye have not chosen one another but I have chosen you for one another." The friendship is not a reward for our discriminating and good taste in finding one another out. It is the instrument by which God reveals to each of us the beauties of others.</div>
+                <div class="quote" style="font-size: 2.3rem; line-height: 4.4rem">In friendship...we think we have chosen our peers. In reality a few years' difference in the dates of our births, a few more miles between certain houses, the choice of one university instead of another...the accident of a topic being raised or not raised at a first meeting--any of these chances might have kept us apart. But, for a Christian, there are, strictly speaking no chances. A secret master of ceremonies has been at work. Christ, who said to the disciples, "Ye have not chosen me, but I have chosen you," can truly say to every group of Christian friends, "Ye have not chosen one another but I have chosen you for one another." The friendship is not a reward for our discriminating and good taste in finding one another out. It is the instrument by which God reveals to each of us the beauties of others.</div>
                 <div class="attribution">
                     <span class="name">C.S. Lewis, </span>
                     <span class="source">Till We Have Faces</span>
@@ -153,14 +153,14 @@
 
                     if (blockquoteEl.offsetHeight > windowHeight * BLOCKQUOTE_HEIGHT_PERCENTAGE) {
                         shrinking = true;
-                        if (fontSize / lineHeight > 0.5) { //Decrease font size
+                        if (fontSize / lineHeight > 0.6) { //Decrease font size
                             quoteEl.style.fontSize = (fontSize - 0.1) + "rem";
                         } else { //Decrease line height
                             quoteEl.style.lineHeight = (lineHeight - 0.1) + "rem";
                         }
-                    } else if (fontSize < 2.2 || lineHeight < 4.4) {
+                    } else if (fontSize < 2.3 || lineHeight < 4.4) {
                         growing = true;
-                        if (fontSize / lineHeight < 0.5) { //Increase font size
+                        if (fontSize / lineHeight < 0.6) { //Increase font size
                             quoteEl.style.fontSize = (fontSize + 0.1) + "rem";
                         } else { //Increase line height
                             quoteEl.style.lineHeight = (lineHeight + 0.1) + "rem";
