@@ -1,24 +1,138 @@
 <html>
     <head>
+        <link href="https://fonts.googleapis.com/css?family=Tajawal&display=swap" rel="stylesheet"> 
         <style>
+            html {
+                font-size: 62.5%;
+            }
+            body {
+                margin: 0;
+            }
+            body * {
+                box-sizing: border-box;
+            }
+            .container {
+                width: 100%;
+                height: 100%;
+                font-family: 'Tajawal', serif;
+                background-color: darkslategray;
+                background-size: cover;
+                background-position: center;
+            }
+            .blockquote {
+                position: absolute;
+                bottom: 10%;
+                right: 10%;
+                width: 80%;
+                max-width: 900px;
+                padding: 70px;
+                border-radius: 60px;
+                background-color: rgba(255, 255, 255, 0.85);
+                
+            }
+            .quote {
+                color: #333;
+                text-align: justify;
+            }
+            .attribution {
+                margin-top: 30px;
+                margin-bottom: -40px;
+                color: rgba(0, 0, 0, 0.5);
+                text-align: right;
+            }
+            .name {
+                font-size: 2.2rem;
+            }
+            .source {
+                font-size: 3rem;
+                font-style: italic;
+            }
+
+            @media screen and (max-width: 700px) {
+                .blockquote {
+                    padding: 30px;
+                    border-radius: 20px;
+                }
+
+                .attribution {
+                    margin-bottom: -10px;
+                }
+            }
         </style>
     </head>
     <body>
-        <div class="background-img">
-
-        </div>
-        
-        <div class="prev"></div>
-        <div class="next"></div>
-
-        <div class="content">
-            <div class="date"></div>
-            <div class="quote">Werds!</div>
-            <div class="attribution"></div>
+        <div class="container">
+            <div class="blockquote">
+                <div class="quote" style="font-size: 2.2rem; line-height: 4.4rem">In friendship...we think we have chosen our peers. In reality a few years' difference in the dates of our births, a few more miles between certain houses, the choice of one university instead of another...the accident of a topic being raised or not raised at a first meeting--any of these chances might have kept us apart. But, for a Christian, there are, strictly speaking no chances. A secret master of ceremonies has been at work. Christ, who said to the disciples, "Ye have not chosen me, but I have chosen you," can truly say to every group of Christian friends, "Ye have not chosen one another but I have chosen you for one another." The friendship is not a reward for our discriminating and good taste in finding one another out. It is the instrument by which God reveals to each of us the beauties of others.</div>
+                <div class="attribution">
+                    <span class="name">C.S. Lewis, </span>
+                    <span class="source">Till We Have Faces</span>
+                </div>
+            </div>
         </div>
 
         <script>
-            
+            var BLOCKQUOTE_HEIGHT_PERCENTAGE = 0.8; //Blockquote el is 80% of page height
+            var _resizeThrottle;
+
+            //Init
+            window.addEventListener("hashchange", hashChange);
+            window.addEventListener("resize", function(event) {
+                if (_resizeThrottle) {
+                    return;
+                }
+                _resizeThrottle = window.setTimeout(function() {
+                    _resizeThrottle = null;
+                    windowResize();
+                }, 100);
+            });
+            hashChange();
+            windowResize();
+
+            //Methods
+            function hashChange(event) {
+                var params = {};
+                var split = window.location.hash.substring(1).split("&");
+                for (var i = 0; i < split.length; i++) {
+                    var entrySplit = split[i].split("=");
+                    params[entrySplit[0]] = entrySplit[1];
+                }
+
+                if (params.image) {
+                    var containerEl = document.querySelector(".container");
+                    containerEl.style.backgroundImage = "url(images/" + params.image + ".jpg)";
+                }
+            }
+
+            function windowResize() {
+                var windowHeight = window.innerHeight;
+                var blockquoteEl = document.querySelector(".blockquote");
+                var quoteEl = document.querySelector(".quote");
+                var shrinking = false;
+                var growing = false;
+                while (!(shrinking && growing)) { //Once we've shrunk and grown, we must have hit close to equalibrium
+                    var fontSize = parseFloat(quoteEl.style.fontSize);
+                    var lineHeight = parseFloat(quoteEl.style.lineHeight);
+
+                    if (blockquoteEl.offsetHeight > windowHeight * BLOCKQUOTE_HEIGHT_PERCENTAGE) {
+                        shrinking = true;
+                        if (fontSize / lineHeight > 0.5) { //Decrease font size
+                            quoteEl.style.fontSize = (fontSize - 0.1) + "rem";
+                        } else { //Decrease line height
+                            quoteEl.style.lineHeight = (lineHeight - 0.1) + "rem";
+                        }
+                    } else if (fontSize < 2.2 || lineHeight < 4.4) {
+                        growing = true;
+                        if (fontSize / lineHeight < 0.5) { //Increase font size
+                            quoteEl.style.fontSize = (fontSize + 0.1) + "rem";
+                        } else { //Increase line height
+                            quoteEl.style.lineHeight = (lineHeight + 0.1) + "rem";
+                        }
+                    } else {
+                        break;
+                    }
+                }
+            }
         </script>
     </body>
 </html>
