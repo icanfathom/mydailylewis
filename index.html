@@ -73,6 +73,8 @@
 
         <script>
             var BLOCKQUOTE_HEIGHT_PERCENTAGE = 0.8; //Blockquote el is 80% of page height
+            var MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+            var NUM_PICTURES = 10;
             var _resizeThrottle;
 
             //Init
@@ -91,17 +93,46 @@
 
             //Methods
             function hashChange(event) {
+                params = getUrlParams();
+                
+                if (params.date) {
+                    var d = new Date();
+                    var dayOfYear = daysBetween(Date.parse(params.date), Date.parse(d.getFullYear() + "-1-1")); //Days since January 1 of the current year
+                    var containerEl = document.querySelector(".container");
+                    containerEl.style.backgroundImage = "url(images/" + ((dayOfYear % NUM_PICTURES) + 1) + ".jpg)";
+                } else {
+                    var newParams = getUrlParams();
+                    var d = new Date();
+                    newParams.date = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+                    setUrlParams(newParams);
+                }
+            }
+
+            function getUrlParams() {
                 var params = {};
-                var split = window.location.hash.substring(1).split("&");
+                var hash = window.location.hash;
+                if (!hash) {
+                    return params;
+                }
+                var split = hash.substring(1).split("&");
                 for (var i = 0; i < split.length; i++) {
                     var entrySplit = split[i].split("=");
-                    params[entrySplit[0]] = entrySplit[1];
+                    params[decodeURIComponent(entrySplit[0])] = decodeURIComponent(entrySplit[1]);
                 }
+                return params;
+            }
 
-                if (params.image) {
-                    var containerEl = document.querySelector(".container");
-                    containerEl.style.backgroundImage = "url(images/" + params.image + ".jpg)";
+            function setUrlParams(params) {
+                var hash = "";
+                for (var key in params) {
+                    if (params.hasOwnProperty(key)) {
+                        if (hash.length > 1) {
+                            hash += "&";
+                        }
+                        hash += encodeURIComponent(key) + "=" + encodeURIComponent(params[key]);
+                    }
                 }
+                window.location.hash = hash;
             }
 
             function windowResize() {
@@ -132,6 +163,10 @@
                         break;
                     }
                 }
+            }
+
+            function daysBetween(date1, date2) {
+                return Math.round(Math.abs((date1 - date2) / MILLISECONDS_PER_DAY));
             }
         </script>
     </body>
