@@ -1,5 +1,6 @@
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://fonts.googleapis.com/css?family=Tajawal&display=swap" rel="stylesheet"> 
         <style>
             html {
@@ -48,7 +49,7 @@
                 font-style: italic;
             }
 
-            @media screen and (max-width: 700px) {
+            @media screen and (max-device-width: 812px) {
                 .blockquote {
                     padding: 30px;
                     border-radius: 20px;
@@ -102,7 +103,7 @@
 
                 if (params.date) {
                     var d = new Date();
-                    var dayOfYear = daysBetween(Date.parse(params.date), Date.parse(d.getFullYear() + "-1-1")); //Days since January 1 of the current year
+                    var dayOfYear = daysBetween(params.date, d.getFullYear() + "-1-1"); //Days since January 1 of the current year
                     var containerEl = document.querySelector(".container");
                     containerEl.style.backgroundImage = "url(images/" + ((dayOfYear % NUM_PICTURES) + 1) + ".jpg)";
                 } else {
@@ -171,7 +172,7 @@
             }
 
             function daysBetween(date1, date2) {
-                return Math.round(Math.abs((date1 - date2) / MILLISECONDS_PER_DAY));
+                return Math.round(Math.abs((Date.parse(date1) - Date.parse(date2)) / MILLISECONDS_PER_DAY));
             }
         </script>
     </body>
