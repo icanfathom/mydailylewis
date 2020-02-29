@@ -53,9 +53,14 @@
                     padding: 30px;
                     border-radius: 20px;
                 }
-
                 .attribution {
                     margin-bottom: -10px;
+                }
+                .name {
+                    font-size: 1.4rem;
+                }
+                .source {
+                    font-size: 1.8rem;
                 }
             }
         </style>
@@ -94,7 +99,7 @@
             //Methods
             function hashChange(event) {
                 params = getUrlParams();
-                
+
                 if (params.date) {
                     var d = new Date();
                     var dayOfYear = daysBetween(Date.parse(params.date), Date.parse(d.getFullYear() + "-1-1")); //Days since January 1 of the current year
