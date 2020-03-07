@@ -1,7 +1,9 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://fonts.googleapis.com/css?family=Tajawal&display=swap" rel="stylesheet"> 
+        <meta charset="UTF-8">
+        <link href="https://fonts.googleapis.com/css?family=Tajawal&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <style>
             html {
                 font-size: 62.5%;
@@ -32,7 +34,7 @@
                 
             }
             .quote {
-                color: #333;
+                color: #222222;
             }
             .attribution {
                 margin-top: 30px;
@@ -46,6 +48,66 @@
             .source {
                 font-size: 3rem;
                 font-style: italic;
+            }
+            .nav {
+                position: absolute;
+                left: 0;
+                top: 0;
+                right: 0;
+                background: rgba(0, 0, 0, 0.3);
+                z-index: 1;
+                transition: background 0.5s;
+            }
+            .nav a {
+                color: #c1a349;
+                text-decoration: none;
+            }
+            .nav.expanded {
+                background: rgba(0, 0, 0, 0.7);
+            }
+            .nav .icon {
+                height: 60px;
+                cursor: pointer;
+            }
+            .nav .dropdown {
+                max-height: 0;
+                margin: 0;
+                padding: 0;
+                color: #c1a349;
+                opacity: 0;
+                list-style: none;
+                font-size: 2.2rem;
+                overflow: hidden;
+                transition: max-height 0.8s cubic-bezier(.17,.84,.44,1), padding 0.8s cubic-bezier(.17,.84,.44,1), opacity 1.5s cubic-bezier(.17,.84,.44,1);
+            }
+            .nav.expanded .dropdown {
+                max-height: 220px;
+                padding: 10px 0;
+                opacity: 1;
+            }
+            .nav .dropdown li {
+                padding: 10px 0;
+                padding-left: calc(50% - 50px); /* Roughly centered, but with left edges all aligned */
+                user-select: none; /* Prevent text highlighting if user is clicking rapidly */
+                cursor: pointer;
+                transition: padding-left 0.3s;
+            }
+            .nav .dropdown li:hover {
+                padding-left: calc(50% - 40px); /* Roughly centered, but with left edges all aligned */
+            }
+            .nav .dropdown li.disabled,
+            .nav.expanded .dropdown li.disabled {
+                opacity: 0.2;
+            }
+            .nav .dropdown li .material-icons {
+                margin: 0 10px 4px 0;
+                vertical-align: middle;
+            }
+            .nav .dropdown .about-advanced {
+                padding: 12px 16px 4px 16px;
+                text-align: right;
+                font-size: 1.4rem;
+                opacity: 0.8;
             }
 
             @media screen and (max-width: 812px), (max-height: 812px)  {
@@ -67,16 +129,27 @@
     </head>
     <body>
         <div class="container">
+            <div class="nav">
+                <div class="icon"></div>
+                <ul class="dropdown">
+                    <li class="today"><i class="material-icons">calendar_today</i>Today</li>
+                    <li class="previous"><i class="material-icons">arrow_back_ios</i>Previous</li>
+                    <li class="next"><i class="material-icons">arrow_forward_ios</i>Next</li>
+                    <div class="about-advanced">Images courtesy of Kurt Jarvi. Site coded by <a href="https://twitter.com/_jjharris" target="_blank">@_jjharris</a>.</div>
+                </ul>
+            </div>
+
             <div class="blockquote">
-                <div class="quote" style="font-size: 2.3rem; line-height: 4.4rem">In friendship...we think we have chosen our peers. In reality a few years' difference in the dates of our births, a few more miles between certain houses, the choice of one university instead of another...the accident of a topic being raised or not raised at a first meeting--any of these chances might have kept us apart. But, for a Christian, there are, strictly speaking no chances. A secret master of ceremonies has been at work. Christ, who said to the disciples, "Ye have not chosen me, but I have chosen you," can truly say to every group of Christian friends, "Ye have not chosen one another but I have chosen you for one another." The friendship is not a reward for our discriminating and good taste in finding one another out. It is the instrument by which God reveals to each of us the beauties of others.</div>
+                <div class="quote" style="font-size: 2.3rem; line-height: 4.4rem">Loading...</div>
                 <div class="attribution">
-                    <span class="name">C.S. Lewis, </span>
-                    <span class="source">Till We Have Faces</span>
+                    <span class="name"></span>
+                    <span class="source"></span>
                 </div>
             </div>
         </div>
 
         <script>
+            var NAV_HEIGHT = 60;
             var BLOCKQUOTE_HEIGHT_PERCENTAGE = 0.8; //Blockquote el is 80% of page height
             var MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
             var NUM_PICTURES = 10;
@@ -98,30 +171,76 @@
                     windowResize();
                 }, 100);
             });
+            document.querySelector(".nav .icon").addEventListener("click", function(event) {
+                var nav = document.querySelector(".nav")
+                if (nav.className.indexOf("expanded") == -1) {
+                    nav.classList.add("expanded");
+                } else {
+                    nav.classList.remove("expanded");
+                }
+            });
+            document.querySelector(".nav .today").addEventListener("click", function(event) {
+                var params = getUrlParams();
+                params.date = stringifyDate(new Date());
+                setUrlParams(params);
+                document.querySelector(".nav").classList.remove("expanded");
+            });
+            document.querySelector(".nav .previous").addEventListener("click", function(event) {
+                var params = getUrlParams();
+                var date = parseDate(params.date);
+                date.setDate(date.getDate() - 1);
+                params.date = stringifyDate(date);
+                setUrlParams(params);
+            });
+            document.querySelector(".nav .next").addEventListener("click", function(event) {
+                if (event.target.className.indexOf("disabled") > -1) {
+                    return;
+                }
+                var params = getUrlParams();
+                var date = parseDate(params.date);
+                date.setDate(date.getDate() + 1);
+                params.date = stringifyDate(date);
+                setUrlParams(params);
+            });
+
             hashChange();
-            windowResize();
 
             //Methods
             function hashChange(event) {
                 params = getUrlParams();
 
                 if (params.date) {
-                    var d = new Date();
-                    var daysElapsed = daysBetween(params.date, "2020-2-29"); //Days since the site went live
+                    var urlDate = parseDate(params.date);
+                    var daysInThePast = Math.floor((Date.now() - urlDate.valueOf()) / MILLISECONDS_PER_DAY);
+                    if (daysInThePast < 0) {
+                        var params = getUrlParams();
+                        params.date = stringifyDate(new Date());
+                        setUrlParams(params);
+                        return;
+                    } else if (daysInThePast == 0) {
+                        document.querySelector(".nav .next").classList.add("disabled");
+                    } else {
+                        document.querySelector(".nav .next").classList.remove("disabled");
+                    }
+
+                    var daysSinceLaunch = Math.floor(Math.abs((urlDate.valueOf() - parseDate("2020-2-29").valueOf()) / MILLISECONDS_PER_DAY));
 
                     var containerEl = document.querySelector(".container");
-                    containerEl.style.backgroundImage = "url(images/" + ((daysElapsed % NUM_PICTURES) + 1) + ".jpg)";
+                    containerEl.style.backgroundImage = "url(images/" + ((daysSinceLaunch % NUM_PICTURES) + 1) + ".jpg)";
 
                     var quoteEl = document.querySelector(".quote");
-                    quoteEl.textContent = QUOTES[daysElapsed % QUOTES.length].quote;
+                    quoteEl.textContent = QUOTES[daysSinceLaunch % QUOTES.length].quote;
 
+                    var nameEl = document.querySelector(".name");
+                    nameEl.textContent = "C.S. Lewis, ";
+                    
                     var sourceEl = document.querySelector(".source");
-                    sourceEl.textContent = QUOTES[daysElapsed % QUOTES.length].source;
+                    sourceEl.textContent = QUOTES[daysSinceLaunch % QUOTES.length].source;
+                    windowResize();
                 } else {
-                    var newParams = getUrlParams();
-                    var d = new Date();
-                    newParams.date = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
-                    setUrlParams(newParams);
+                    var params = getUrlParams();
+                    params.date = stringifyDate(new Date());
+                    setUrlParams(params);
                 }
             }
 
@@ -162,7 +281,7 @@
                     var fontSize = parseFloat(quoteEl.style.fontSize);
                     var lineHeight = parseFloat(quoteEl.style.lineHeight);
 
-                    if (blockquoteEl.offsetHeight > windowHeight * BLOCKQUOTE_HEIGHT_PERCENTAGE) {
+                    if (blockquoteEl.offsetHeight > windowHeight * BLOCKQUOTE_HEIGHT_PERCENTAGE - NAV_HEIGHT) {
                         shrinking = true;
                         if (fontSize / lineHeight > 0.6) { //Decrease font size
                             quoteEl.style.fontSize = (fontSize - 0.1) + "rem";
@@ -182,8 +301,13 @@
                 }
             }
 
-            function daysBetween(date1, date2) {
-                return Math.round(Math.abs((Date.parse(date1) - Date.parse(date2)) / MILLISECONDS_PER_DAY));
+            function parseDate(dateString) {
+                var dateSplit = dateString.split("-");
+                return new Date(dateSplit[0], parseInt(dateSplit[1]) - 1, dateSplit[2]); //Year, month (0-indexed), day
+            }
+
+            function stringifyDate(date) {
+                return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
             }
         </script>
     </body>
