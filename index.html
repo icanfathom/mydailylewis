@@ -816,12 +816,6 @@
                     var containerEl = document.querySelector(".container");
                     containerEl.style.backgroundImage = "url(images/" + ((daysSinceLaunch % NUM_PICTURES) + 1) + ".jpg)";
 
-                    var blockquoteEl= document.querySelector(".blockquote");
-                    blockquoteEl.classList.add("hidden");
-                    window.setTimeout(function() {
-                        blockquoteEl.classList.remove("hidden");
-                    }, 100);
-
                     var quoteEl = document.querySelector(".quote");
                     quoteEl.textContent = QUOTES[daysSinceLaunch % QUOTES.length].quote;
 
@@ -830,7 +824,13 @@
                     
                     var sourceEl = document.querySelector(".source");
                     sourceEl.textContent = QUOTES[daysSinceLaunch % QUOTES.length].source;
-                    windowResize();
+
+                    var blockquoteEl= document.querySelector(".blockquote");
+                    blockquoteEl.classList.add("hidden");
+                    window.setTimeout(function() {
+                        blockquoteEl.classList.remove("hidden");
+                        windowResize();
+                    }, 100);
                 } else {
                     var params = getUrlParams();
                     params.date = stringifyDate(new Date());
