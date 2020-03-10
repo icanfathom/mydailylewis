@@ -156,7 +156,7 @@
                     <li class="today"><i class="material-icons">calendar_today</i>Today</li>
                     <li class="previous"><i class="material-icons">arrow_back_ios</i>Previous</li>
                     <li class="next"><i class="material-icons">arrow_forward_ios</i>Next</li>
-                    <div class="about-advanced">Images courtesy of Kurt Jarvi &nbsp;|&nbsp;  Site by <a href="https://twitter.com/_jjharris" target="_blank">@_jjharris</a></div>
+                    <div class="about-advanced">Images courtesy of Kurt Jarvi &nbsp;|&nbsp;  Site by <a href="https://twitter.com/josephmerboth" target="_blank">@josephmerboth</a></div>
                 </ul>
             </nav>
 
@@ -170,6 +170,7 @@
         </div>
 
         <script>
+            var LAUNCH_DATE = "2020-2-29";
             var NAV_HEIGHT = 60;
             var BLOCKQUOTE_HEIGHT_PERCENTAGE = 0.84; //Blockquote el is 84% of page height
             var MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -220,9 +221,6 @@
                 setUrlParams(params);
             });
             document.querySelector(".nav .next").addEventListener("click", function(event) {
-                if (event.target.className.indexOf("disabled") > -1) {
-                    return;
-                }
                 var params = getUrlParams();
                 var date = parseDate(params.date);
                 date.setDate(date.getDate() + 1);
@@ -238,6 +236,7 @@
 
                 if (params.date) {
                     var urlDate = parseDate(params.date);
+
                     var daysInThePast = Math.floor((Date.now() - urlDate.valueOf()) / MILLISECONDS_PER_DAY);
                     if (daysInThePast < 0) {
                         var params = getUrlParams();
@@ -250,7 +249,17 @@
                         document.querySelector(".nav .next").classList.remove("disabled");
                     }
 
-                    var daysSinceLaunch = Math.floor(Math.abs((urlDate.valueOf() - parseDate("2020-2-29").valueOf()) / MILLISECONDS_PER_DAY));
+                    var daysSinceLaunch = Math.round((urlDate.valueOf() - parseDate(LAUNCH_DATE).valueOf()) / MILLISECONDS_PER_DAY);
+                    if (daysSinceLaunch < 0) {
+                        var params = getUrlParams();
+                        params.date = LAUNCH_DATE;
+                        setUrlParams(params);
+                        return;
+                    } else if (daysSinceLaunch == 0) {
+                        document.querySelector(".nav .previous").classList.add("disabled");
+                    } else {
+                        document.querySelector(".nav .previous").classList.remove("disabled");
+                    }
 
                     var containerEl = document.querySelector(".container");
                     containerEl.style.backgroundImage = "url(images/" + ((daysSinceLaunch % NUM_PICTURES) + 1) + ".jpg)";
