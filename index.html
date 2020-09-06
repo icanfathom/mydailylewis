@@ -45,14 +45,6 @@
                 color: black;
                 background-color: #c1a349;
             }
-            @keyframes fade-in {
-                from {
-                    opacity: 0;
-                }
-                to {
-                    opacity: 1;
-                }
-            }
             .quote {
                 color: #222222;
             }
@@ -74,19 +66,28 @@
                 left: 0;
                 top: 0;
                 right: 0;
-                background: rgba(0, 0, 0, 0.5);
+                height: 60px;
+                color: #c1a349;
+                background-color: rgba(0, 0, 0, 0.5);
+                font-size: 2.2rem;
                 z-index: 1;
-                transition: background 0.5s;
+                overflow: hidden;
+                transition: background 0.5s, height 0.6s cubic-bezier(.17,.84,.44,1);
             }
             .nav a {
                 color: #c1a349;
                 text-decoration: none;
             }
             .nav.expanded {
-                background: rgba(0, 0, 0, 0.7);
+                height: 316px;
+                background-color: rgba(0, 0, 0, 0.7);
+            }
+            .nav.expanded.search {
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.85);
+                transition-duration: 1.2s;
             }
             .nav .icon {
-                height: 60px;
                 cursor: pointer;
             }
             .nav .icon img {
@@ -95,24 +96,20 @@
                 height: 38px;
             }
             .nav .dropdown {
-                max-height: 0;
                 margin: 0;
                 padding: 0;
-                color: #c1a349;
                 opacity: 0;
                 list-style: none;
-                font-size: 2.2rem;
-                overflow: hidden;
-                transition: max-height 0.6s cubic-bezier(.17,.84,.44,1), padding 0.6s cubic-bezier(.17,.84,.44,1), opacity 1.3s cubic-bezier(.17,.84,.44,1);
+                transition: padding 0.6s cubic-bezier(.17,.84,.44,1), opacity 1.3s cubic-bezier(.17,.84,.44,1);
             }
             .nav.expanded .dropdown {
-                max-height: 220px;
                 padding: 10px 0;
                 opacity: 1;
             }
             .nav .dropdown li {
                 padding: 10px 0;
                 padding-left: calc(50% - 50px); /* Roughly centered, but with left edges all aligned */
+                height: 52px;
                 cursor: pointer;
                 /* Prevent text highlighting if user is clicking rapidly */
                 user-select: none;
@@ -130,6 +127,26 @@
             .nav.expanded .dropdown li.disabled {
                 opacity: 0.2;
             }
+            .nav.search .dropdown li.search-hidden,
+            .nav.search .dropdown div.search-hidden {
+                overflow: hidden;
+                transition: height 1s, padding-top 1s, padding-bottom 1s, opacity 0.7s;
+            }
+            .nav.search .dropdown li.search-hidden,
+            .nav.search .dropdown div.search-hidden {
+                height: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+                opacity: 0;
+            }
+            .nav.search .dropdown li.search {
+                height: 66px;
+                padding-left: 20px;
+                transition: padding-left 1s;
+            }
+            .nav.search .dropdown .search-title {
+                display: none;
+            }
             .nav .dropdown li .material-icons {
                 margin: 0 10px 4px 0;
                 vertical-align: middle;
@@ -139,6 +156,51 @@
                 text-align: right;
                 font-size: 1.4rem;
                 opacity: 0.8;
+            }
+            .nav .end-search {
+                display: none;
+                animation: 0.8s rotate-in;
+            }
+            .nav .start-search {
+                animation: 0.8s rotate-in-reverse;
+            }
+            .nav.search .start-search {
+                display: none;
+            }
+            .nav.search .end-search {
+                display: inline-block;
+            }
+            .nav .search-bar {
+                height: 46px;
+                width: 0;
+                padding: 0 12px;
+                border-radius: 8px;
+                background-color: rgba(0, 0, 0, 0.8);
+                border: none;
+                color: #ddd;
+                font-size: 1.8rem;
+                opacity: 0;
+                transition: width 0.4s, opacity 0.4s;
+            }
+            .nav.search .search-bar {
+                width: calc(100% - 80px);
+                opacity: 1;
+                transition: width 1s, opacity 1.4s;
+            }
+            .nav .search-results {
+                height: calc(100% - 134px);
+                font-size: 1.6rem;
+                border-top: solid 1px #c1a349;
+                overflow: auto;
+                animation: .4s fade-in;
+            }
+            .nav .search-result {
+                padding: 12px;
+                border-bottom: solid 1px #c1a349;
+                cursor: pointer;
+            }
+            .nav .search-result .search-highlight {
+                color: #ddd;
             }
 
             @media screen and (max-width: 812px), (max-height: 812px)  {
@@ -156,6 +218,39 @@
                     font-size: 1.8rem;
                 }
             }
+
+            @keyframes fade-in {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+            @keyframes rotate-in {
+                0% {
+                    opacity: 0;
+                    transform: rotate(90deg);
+                }
+                25% {
+                    opacity: 1;
+                }
+                100% {
+                    transform: rotate(0deg);
+                }
+            }
+            @keyframes rotate-in-reverse {
+                0% {
+                    opacity: 0;
+                    transform: rotate(-45deg);
+                }
+                50% {
+                    opacity: 1;
+                }
+                100% {
+                    transform: rotate(0deg);
+                }
+            }
         </style>
     </head>
     <body>
@@ -165,11 +260,18 @@
             <nav class="nav">
                 <div class="icon"><img src="images/Logo.svg" alt=""></div>
                 <ul class="dropdown">
-                    <li class="today"><i class="material-icons">calendar_today</i>Today</li>
-                    <li class="previous"><i class="material-icons">arrow_back_ios</i>Previous</li>
-                    <li class="next"><i class="material-icons">arrow_forward_ios</i>Next</li>
-                    <div class="about-advanced">Images courtesy of Kurt Jarvi &nbsp;|&nbsp;  Site by <a href="https://twitter.com/josephmerboth" target="_blank">@josephmerboth</a></div>
+                    <li class="today search-hidden"><i class="material-icons">calendar_today</i>Today</li>
+                    <li class="previous search-hidden"><i class="material-icons">arrow_back_ios</i>Previous</li>
+                    <li class="next search-hidden"><i class="material-icons">arrow_forward_ios</i>Next</li>
+                    <li class="search">
+                        <i class="material-icons start-search">search</i>
+                        <i class="material-icons end-search">close</i>
+                        <span class="search-title">Search</span>
+                        <input class="search-bar" type="text" name="search"  autocomplete="off">
+                    </li>
+                    <div class="about-advanced search-hidden">Images courtesy of Kurt Jarvi &nbsp;|&nbsp;  Site by <a href="https://twitter.com/josephmerboth" target="_blank">@josephmerboth</a></div>
                 </ul>
+                <div class="search-results"></div>
             </nav>
 
             <div class="blockquote">
@@ -187,6 +289,7 @@
             var BLOCKQUOTE_HEIGHT_PERCENTAGE = 0.84; //Blockquote el is 84% of page height
             var MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
             var NUM_PICTURES = 10;
+            var MAX_SEARCH_RESULTS = 40;
             var _resizeThrottle;
             var QUOTES = [
                 { quote: "If one has to choose between reading the new books and reading the old, one must choose the old: not because they are necessarily better but because they contain precisely those truths of which our own age is neglectful.", source: "God in the Dock" },
@@ -202,13 +305,13 @@
                 { quote: "Christianity simply does not make sense until you have faced the sort of facts I have been describing. Christianity tells people to repent and promises them forgiveness. It therefore has nothing (as far as I know) to say to people who do not know they have done anything to repent of and who do not feel that they need any forgiveness. It is after you have realized that there is a real Moral Law, and a Power behind the law, and that you have broken that law and put yourself wrong with that Power—it is after all this, and not a moment sooner, that Christianity begins to talk.", source: "Mere Christianity" },
                 { quote: "If there is no God then we have no interest in the minimal religion or any other. We will not make a lie even to save civilization. But if there is, then it is so probable as to be almost axiomatic that the initiative lies wholly on His side. If He can be known it will be by self-revelation on His part, not by speculation on ours.", source: "God in the Dock" },
                 { quote: "Christianity does not want us to reduce by one atom the hatred we feel for cruelty and treachery. We ought to hate them. Not one word of what we have said about them needs to be unsaid. But it does want us to hate them in the same way in which we hate things in ourselves: being sorry that the man should have done such things, and hoping, if it is anyway possible, that somehow, sometime, somewhere he can be cured and made human again.", source: "Mere Christianity" },
-                { quote: "Of the things that followed I cannot say at all whether they were what men call dream. And for all I can tell, the only difference is that what many see we call a real thing, and what only one sees we call a dream. But things that many see may have no taste or moment in them at all, and things that are shown only to one may be spears and water-spouts of truth from the very depth of truth.", source: "Till We Have Faces" },
-                { quote: "Never forget that when we are dealing with any pleasure in its healthy and normal and satisfying form, we are, in a sense, on the Enemy's [God's] ground...He made the pleasure: all our research so far has not enabled us to produce one. All we can do is to encourage the humans to take the pleasures which our Enemy has produced, at at times, or in ways, or in degrees, which He has forbidden. ", source: "The Screwtape Letters" },
+                { quote: "Of the things that followed I cannot say at all whether they were what men call dreams. And for all I can tell, the only difference is that what many see we call a real thing, and what only one sees we call a dream. But things that many see may have no taste or moment in them at all, and things that are shown only to one may be spears and water-spouts of truth from the very depth of truth.", source: "Till We Have Faces" },
+                { quote: "Never forget that when we are dealing with any pleasure in its healthy and normal and satisfying form, we are, in a sense, on the Enemy's [God's] ground...He made the pleasure: all our research so far has not enabled us to produce one. All we can do is to encourage the humans to take the pleasures which our Enemy has produced, at times, or in ways, or in degrees, which He has forbidden. ", source: "The Screwtape Letters" },
                 { quote: "And if an infinitely wise Being listens to the requests of finite and foolish creatures, of course He will sometimes grant and sometimes refuse them.", source: "The World's Last Night: And Other Essays" },
                 { quote: "The Historical Point of View, put briefly, means that when a learned man is presented with any statement in an ancient author, the one question he never asks is whether it is true. He asks who influenced the ancient writer, and how far the statement is consistent with what he said in other books, and what phase in the writer's development, or in the general history of thought, it illustrates, and how it affected later writers, and how often it has been misunderstood (specially by the learned man's own colleagues) and what the general course of criticism on it has been for the last ten years, and what is the 'present state of the question.", source: "The Screwtape Letters" },
                 { quote: "Be sure that the ins and outs of your individuality are no mystery to Him; and one day they will no longer be a mystery to you...God will look to every soul like its first love because He is its first love. Your place in heaven will seem to be made for you and you alone, because you were made for it—made for it stitch by stitch as a glove is made for a hand.", source: "The Problem of Pain" },
                 { quote: "Everything becomes more and more itself. Here is joy that cannot be shaken. Our light can swallow up your darkness: but your darkness cannot now infect our light. No, no, no. Come to us. We will not go to you. Can you really have thought that love and joy would always be at the mercy of frowns and sighs? Did you not know they were stronger than their opposites?", source: "The Great Divorce" },
-                { quote: "And above all, you must be asking which door is the true one; not which pleases you best by its paint and panelling...the question should never be: 'Do I like that kind of service?' but 'Are these doctrines true: Is holiness there? Does my conscience move me towards this? Is my reluctance to move to this door due to my pride, or my mere taste, or my personal dislike for this particular door-keeper?", source: "Mere Christianity" },
+                { quote: "And above all, you must be asking which door is the true one; not which pleases you best by its paint and panelling...the question should never be: 'Do I like that kind of service?' but 'Are these doctrines true: Is holiness there? Does my conscience move me towards this? Is my reluctance to move to this door due to my pride, or my mere taste, or my personal dislike for this particular door-keeper?''", source: "Mere Christianity" },
                 { quote: "Adventures are never fun while you're having them.", source: "The Voyage of the Dawn Treader" },
                 { quote: "Aslan's instructions always work; there are no exceptions.", source: "The Silver Chair" },
                 { quote: "No man who cares about originality will ever be original. It's the man who's only thinking about doing a good job or telling the truth who becomes really original—and doesn't notice it.", source: "Beyond Personality: The Christian Idea of God" },
@@ -240,7 +343,7 @@
                 { quote: "Friendship exhibits a glorious 'nearness by resemblance' to Heaven itself where the very multitude of the blessed (which no man can number) increases the fruition which each has of God. For every soul, seeing Him in her own way, doubtless communicates that unique vision to all the rest. That, says an old author, is why the Seraphim in Isaiah's vision are crying 'Holy, Holy, Holy' to one another. The more we thus share the Heavenly Bread between us the more we shall all have.", source: "The Four Loves" },
                 { quote: "Almost certainly God is not in time. His life does not consist of moments one following another...Ten-thirty—and every other moment from the beginning of the world—is always Present for Him. If you like to put it this way, He has all eternity in which to listen to the split second of prayer put up by a pilot as his plane crashes in flames.", source: "Mere Christianity" },
                 { quote: "Discussions usually separate us; actions sometimes unite us.", source: "Letters to Malcolm: Chiefly on Prayer" },
-                { quote: "You have noticed, I hope, that man is the only amateur animal; all the other are professionals.", source: "Rehabilitations & Other Essays" },
+                { quote: "You have noticed, I hope, that man is the only amateur animal; all the others are professionals.", source: "Rehabilitations & Other Essays" },
                 { quote: "I have seen great beauty of spirit in some who were great sufferers. I have seen men, for the most part, grow better not worse with advancing years, and I have seen the last illness produce treasures of fortitude and meekness from most unpromising subjects.", source: "The Problem of Pain" },
                 { quote: "The world does not consist of 100 percent Christians and 100 percent non-Christians. There are people (a great many of them) who are slowly ceasing to be Christians but who still call themselves by that name: some of them are clergymen. There are other people who are slowly becoming Christians though they do not yet call themselves so. ", source: "Mere Christianity" },
                 { quote: "If there's anyone who can appear before Aslan without their knees knocking, they're either braver than most, or else just silly.", source: "The Lion, the Witch and the Wardrobe" },
@@ -324,7 +427,7 @@
                 { quote: "Enemy-occupied territory—that is what this world is. Christianity is the story of how the rightful king has landed, you might say landed in disguise, and is calling us all to take part in a great campaign of sabotage.", source: "Mere Christianity" },
                 { quote: "The worldly man treats certain people kindly because he 'likes' them: the Christian, trying to treat every one kindly, finds him liking more and more people as he goes on—including people he could not even have imagined himself liking at the beginning.", source: "Mere Christianity" },
                 { quote: "It is waking that understands sleep and not sleep that understands waking. There is an ignorance of evil that comes from being young: there is a darker ignorance that comes from doing it, as men by sleeping lose the knowledge of sleep.", source: "Perelandra" },
-                { quote: "If you are worried about the people outside, the most unreasonable thing you can do is remain outside yourself. Christians are Christ's body...every addition to that body enables Him to do more. If you want to help those outside you must add your own little cell to the body of Christ who along can help them. Cutting off a man's fingers would be a odd way of getting him to do more work.", source: "Mere Christianity" },
+                { quote: "If you are worried about the people outside, the most unreasonable thing you can do is remain outside yourself. Christians are Christ's body...every addition to that body enables Him to do more. If you want to help those outside you must add your own little cell to the body of Christ who alone can help them. Cutting off a man's fingers would be a odd way of getting him to do more work.", source: "Mere Christianity" },
                 { quote: "God has no needs. Human love, as Plato teaches us, is the child of Poverty – of want or lack; it is caused by a real or supposed goal in its beloved which the lover needs and desires. But God's love, far from being caused by goodness in the object, causes all the goodness which the object has, loving it first into existence, and then into real, though derivative, lovability. God is Goodness. He can give good, but cannot need or get it. In that sense , His love is, as it were, bottomlessly selfless by very definition; it has everything to give, and nothing to receive.", source: "The Problem of Pain" },
                 { quote: "Relying on God has to begin all over again every day as if nothing had yet been done.", source: "Letters to Malcolm: Chiefly on Prayer" },
                 { quote: "He who has God and everything else has no more than he who has God only.", source: "The Weight of Glory" },
@@ -349,7 +452,7 @@
                 { quote: "But do remember, the only thing that matters is the extent to which you separate the man from the Enemy [God]. It does not matter how small the sins are provided that their cumulative effect is to edge the man away from the Light and out into the Nothing. Murder is no better than cards if cards can do the trick. Indeed the safest road to Hell is the gradual one—the gentle slope, soft underfoot, without sudden turnings, without milestones, without signposts.", source: "The Screwtape Letters" },
                 { quote: "Ye cannot know eternal reality by a definition.", source: "The Great Divorce" },
                 { quote: "Of all tyrannies, a tyranny sincerely exercised for the good of its victims may be the most oppressive. It would be better to live under robber barons than under omnipotent moral busybodies. The robber baron's cruelty may sometimes sleep, his cupidity may at some point be satiated; but those who torment us for our own good will torment us without end for they do so with the approval of their own conscience. They may be more likely to go to Heaven yet at the same time likelier to make a Hell of earth. This very kindness stings with intolerable insult. To be 'cured' against one's will and cured of states which we may not regard as disease is to be put on a level of those who have not yet reached the age of reason or those who never will; to be classed with infants, imbeciles, and domestic animals.", source: "God in the Dock" },
-                { quote: "Make your choice, adventurous Stranger; Strike the bell and bide the danger, Or wonder , till it drives you mad, What would have followed if you had.", source: "The Magician's Nephew" },
+                { quote: "Make your choice, adventurous Stranger; Strike the bell and bide the danger, Or wonder, till it drives you mad, What would have followed if you had.", source: "The Magician's Nephew" },
                 { quote: "You do not see as quite as well as you think.", source: "The Silver Chair" },
                 { quote: "You can't see anything properly while your eyes are blurred with tears. You can't, in most things, get what you want if you want it too desperately: anyway, you can't get the best out of it. 'Now! Let's have a real good talk' reduces everyone to silence. 'I must get a good sleep tonight' ushers in hours of wakefulness. Delicious drinks are wasted on a really ravenous thirst. Is it similarly the very intensity of the longing that draws the iron curtain, that makes us feel we are staring into a vacuum when we think about our dead? 'Them as asks' (at any rate 'as asks too importunately') don't get.", source: "A Grief Observed" },
                 { quote: "When you are asked for trust you may give it or withhold it; it is senseless to say that you will trust if you are given demonstrative certainty. There would be no room for trust if demonstration were given.", source: "The World's Last Night: And Other Essays" },
@@ -779,6 +882,96 @@
                 params.date = stringifyDate(date);
                 setUrlParams(params);
             });
+            document.querySelector(".nav .search").addEventListener("click", function(event) {
+                var nav = document.querySelector(".nav")
+                if (nav.className.indexOf("search") == -1) {
+                    nav.classList.add("search");
+                    document.querySelector(".search-bar").focus();
+                }
+            });
+            document.querySelector(".nav .end-search").addEventListener("click", function(event) {
+                var nav = document.querySelector(".nav")
+                if (nav.className.indexOf("search") > -1) {
+                    nav.classList.remove("search");
+                    document.querySelector(".search-bar").value = "";
+                    var searchResultsEl = document.querySelector(".search-results");
+                    while (searchResultsEl.firstChild) {
+                        searchResultsEl.removeChild(searchResultsEl.firstChild);
+                    }
+                    event.stopImmediatePropagation();
+                }
+            });
+            document.querySelector(".search-bar").addEventListener("input", function(event) {
+                var newVal = event.target.value.toLowerCase();
+                var split = newVal.split(" ");
+                for (var i = split.length - 1; i >= 0; i--) {
+                    if (split[i] == "" || split[i] == " ") {
+                        split.splice(i, 1);
+                    }
+                }
+                
+                var matchingIndices = [];
+                for (var i = 0; i < QUOTES.length; i++) {
+                    if (parseDate(getDateFromIndex(i)).valueOf() > Date.now()) {
+                        continue;
+                    }
+
+                    var matches = [];
+                    for (var j = 0; j < split.length; j++) {
+                        if (QUOTES[i].quote.toLowerCase().indexOf(split[j]) > -1 && matches.indexOf(split[j]) == -1) {
+                            matches.push(split[j])
+                        }
+                    }
+                    if (matches.length == split.length) {
+                        matchingIndices.push(i);
+                    }
+                }
+                
+                var searchResultsEl = document.querySelector(".search-results");
+                var resultsEls = searchResultsEl.querySelectorAll("div");
+                //Clear excess els from previous searches
+                for (var i = resultsEls.length - 1; i >= (matchingIndices.length <= MAX_SEARCH_RESULTS ? matchingIndices.length : 0); i--) {
+                    searchResultsEl.removeChild(resultsEls[i])
+                }
+
+                if (matchingIndices.length > MAX_SEARCH_RESULTS) {
+                    return;
+                }
+
+                for (var i = 0; i < matchingIndices.length; i++) {
+                    var words = QUOTES[matchingIndices[i]].quote.split(" ");
+                    for (var j = 0; j < words.length; j++) {
+                        var closestMatchSearchTerm = -1;
+                        var matchStartCharIdx = -1;
+                        for (var k = 0; k < split.length; k++) {
+                            var matchIdx = words[j].toLowerCase().indexOf(split[k]);
+                            if (matchIdx > -1 && (closestMatchSearchTerm == -1 || split[k].length > split[closestMatchSearchTerm].length)) {
+                                closestMatchSearchTerm = k;
+                                matchStartCharIdx = matchIdx;
+                            }
+                        }
+                        if (closestMatchSearchTerm > -1) {
+                            words[j] = words[j].substr(0, matchStartCharIdx) + "<span class='search-highlight'>" + words[j].substr(matchStartCharIdx, split[closestMatchSearchTerm].length) + "</span>" + words[j].substr(matchStartCharIdx + split[closestMatchSearchTerm].length);
+                        }
+                    }
+                    
+                    var resultEl;
+                    if (i >= resultsEls.length) {
+                        resultEl = document.createElement("div");
+                        resultEl.classList.add("search-result");
+                        searchResultsEl.appendChild(resultEl);
+                    } else {
+                        resultEl = resultsEls[i];
+                    }
+                    resultEl.innerHTML = words.join(" ");
+                    resultEl.addEventListener("click", (function(i, event) {
+                        document.querySelector(".nav").classList.remove("expanded");
+                        var params = getUrlParams();
+                        params.date = getDateFromIndex(matchingIndices[i]);
+                        setUrlParams(params);
+                    }).bind(this, i));
+                }
+            });
 
             hashChange();
 
@@ -902,6 +1095,19 @@
 
             function stringifyDate(date) {
                 return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+            }
+
+            function getDateFromIndex(idx) {
+                //Find recurrence of quote closest to the current date
+                var curMilliseconds = parseDate(LAUNCH_DATE).valueOf() + idx * MILLISECONDS_PER_DAY;
+                while (true) {
+                    if (curMilliseconds + QUOTES.length * MILLISECONDS_PER_DAY <= Date.now()) {
+                        curMilliseconds += QUOTES.length * MILLISECONDS_PER_DAY;
+                    } else {
+                        break;
+                    }
+                }
+                return stringifyDate(new Date(curMilliseconds));
             }
         </script>
     </body>
