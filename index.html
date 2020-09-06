@@ -118,7 +118,8 @@
                 -khtml-user-select: none;
                 -moz-user-select: none;
                 -ms-user-select: none;
-                transition: padding-left 0.3s;
+                overflow: hidden;
+                transition: padding-left 0.3s, padding-top 1s, padding-bottom 1s, height 1s, opacity 0.7s;
             }
             .nav .dropdown li:hover {
                 padding-left: calc(50% - 40px); /* Roughly centered, but with left edges all aligned */
@@ -126,11 +127,6 @@
             .nav .dropdown li.disabled,
             .nav.expanded .dropdown li.disabled {
                 opacity: 0.2;
-            }
-            .nav.search .dropdown li.search-hidden,
-            .nav.search .dropdown div.search-hidden {
-                overflow: hidden;
-                transition: height 1s, padding-top 1s, padding-bottom 1s, opacity 0.7s;
             }
             .nav.search .dropdown li.search-hidden,
             .nav.search .dropdown div.search-hidden {
@@ -192,12 +188,15 @@
                 font-size: 1.6rem;
                 border-top: solid 1px #c1a349;
                 overflow: auto;
-                animation: .4s fade-in;
             }
             .nav .search-result {
                 padding: 12px;
                 border-bottom: solid 1px #c1a349;
                 cursor: pointer;
+                animation: .4s fade-in;
+            }
+            .nav .search-result.zoom-out {
+                animation: 0.4s zoom-out;
             }
             .nav .search-result .search-highlight {
                 color: #ddd;
@@ -249,6 +248,16 @@
                 }
                 100% {
                     transform: rotate(0deg);
+                }
+            }
+            @keyframes zoom-out {
+                from {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                to {
+                    opacity: 0;
+                    transform: scale(0.96);
                 }
             }
         </style>
@@ -931,7 +940,10 @@
                 var resultsEls = searchResultsEl.querySelectorAll("div");
                 //Clear excess els from previous searches
                 for (var i = resultsEls.length - 1; i >= (matchingIndices.length <= MAX_SEARCH_RESULTS ? matchingIndices.length : 0); i--) {
-                    searchResultsEl.removeChild(resultsEls[i])
+                    resultsEls[i].classList.add("zoom-out");
+                    window.setTimeout((function(i) {
+                        searchResultsEl.removeChild(resultsEls[i]);
+                    }).bind(this, i), 400);
                 }
 
                 if (matchingIndices.length > MAX_SEARCH_RESULTS) {
