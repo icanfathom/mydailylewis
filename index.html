@@ -79,7 +79,7 @@
                 text-decoration: none;
             }
             .nav.expanded {
-                height: 316px;
+                height: 324px;
                 background-color: rgba(0, 0, 0, 0.7);
             }
             .nav.expanded.search {
@@ -88,6 +88,7 @@
                 transition-duration: 1.2s;
             }
             .nav .icon {
+                height: 60px;
                 cursor: pointer;
             }
             .nav .icon img {
@@ -496,7 +497,7 @@
                 { quote: "Man approaches God most nearly when he is in one sense least like God. For what can be more unlike than fullness and need, sovereignty and humility, righteousness and penitence, limitless power and a cry for help?", source: "The Four Loves" },
                 { quote: "We all want progress. But progress means getting nearer to the place where you want to be. And if you have taken a wrong turning then to go forward does not get you any nearer. If you are on the wrong road progress means doing an about-turn and walking back to the right road and in that case the man who turns back soonest is the most progressive man. There is nothing progressive about being pig-headed and refusing to admit a mistake. And I think if you look at the present state of the world it's pretty plain that humanity has been making some big mistake. We're on the wrong road. And if that is so we must go back. Going back is the quickest way on.", source: "The Case for Christianity" },
                 { quote: "They say of some temporal suffering, 'No future bliss can make up for it,' not knowing that Heaven, once attained, will work backwards and turn even that agony into a glory.", source: "The Great Divorce" },
-                { quote: "You never know how much you really believe anything until its truth of falsehood becomes a matter of life and death to you. It is easy to say you believe a rope to be strong and sound as long as you are merely using it to cord a box. But suppose you had to hang by that rope over a precipice. Wouldn't you then first discover how much you really trusted it?", source: "A Grief Observed" },
+                { quote: "You never know how much you really believe anything until its truth or falsehood becomes a matter of life and death to you. It is easy to say you believe a rope to be strong and sound as long as you are merely using it to cord a box. But suppose you had to hang by that rope over a precipice. Wouldn't you then first discover how much you really trusted it?", source: "A Grief Observed" },
                 { quote: "I have come home at last! This is my real country! I belong here. This is the land I have been looking for all my life, though I never knew it till now. The reason why we loved the old Narnia is that it sometimes looked a little like this.", source: "The Last Battle" },
                 { quote: "To the Materialist, things like nations, classes, civilizations must be more important than individuals, because the individuals live only seventy odd years each and the group may last for centuries. But to the Christian, individuals are more important, for they live eternally; and races, civilizations and the like, are in comparison the creatures of a day.", source: "God in the Dock" },
                 { quote: "A man who has lived in many places is not likely to be deceived by the local errors of his native village; the scholar has lived in many times and is therefore in some degree immune from the great cataract of nonsense that pours from the press and the microphone of his own age.", source: "The Weight of Glory" },
@@ -842,6 +843,7 @@
 
             //Init
             window.addEventListener("hashchange", hashChange);
+            window.addEventListener("focus", hashChange); //Trigger hashChange on focus so the Next button can be properly enabled/disabled
             window.addEventListener("resize", function(event) {
                 if (_resizeThrottle) {
                     return;
